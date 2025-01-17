@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtre par Artiste</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Filtrage des Artistes</h1>
+    <form method="GET" action="/">
+        <label for="filter">Rechercher un artiste :</label>
+        <input type="text" name="filter" id="filter">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <h2>Résultats des concerts :</h2>
+    <ul>
+        {{range .}}
+            <li><strong>Nom de l'artiste :</strong> {{.ArtistName}}</li>
+            <li>
+                <strong>Dates et lieux de concert :</strong>
+                <ul>
+                    {{range $location, $dates := .DatesLocations}}
+                        <li><strong>{{$location}}:</strong> {{$dates}}</li>
+                    {{end}}
+                </ul>
+            </li>
+        {{else}}
+            <li>Aucun concert trouvé pour cet artiste.</li>
+        {{end}}
+    </ul>
+</body>
+</html>
