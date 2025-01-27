@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    color: #333;
+    background-color: #f0f0f0; /* Couleur de fond pour le corps */
+}
+
+h1 {
+    color: #007BFF;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.artist-container {
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    grid-gap: 20px; 
+}
+
+.artist-card {
+    border: 1px solid whitesmoke;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
