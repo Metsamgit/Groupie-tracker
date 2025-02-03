@@ -11,8 +11,9 @@ import (
 )
 
 type Artist struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Image string `json:"image"`
 }
 
 type Relation struct {
@@ -20,6 +21,7 @@ type Relation struct {
 	DatesLocations  map[string][]string `json:"datesLocations"`
 	ArtistName      string
 	ArtistNameLower string
+	ArtistImage     string `json:"image"`
 }
 
 type APIResponse struct {
@@ -96,6 +98,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				if strings.Contains(strings.ToLower(location), filter) ||
 					strings.Contains(strings.ToLower(date), filter) ||
 					strings.Contains(strings.ToLower(artists[relation.ID-1].Name), filter) {
+					relation.ArtistImage = artists[relation.ID-1].Image
 					relation.ArtistName = artists[relation.ID-1].Name
 					relation.ArtistNameLower = ArtistNameLower
 					if _, exists := filteredMap[relation.ID]; !exists {

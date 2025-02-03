@@ -19,7 +19,7 @@
         {{range .}}
             <div class="artist-card">
                 <h3>{{.ArtistName}}</h3>
-                <img src="https://groupietrackers.herokuapp.com/api/images/{{.ArtistNameLower}}.jpeg" alt="Image de {{.ArtistName}}"></img>
+                <img src="{{.ArtistImage}}" alt="Image de {{.ArtistName}}"></img>
                 <ul>
                     {{range $location, $dates := .DatesLocations}}
                         <li><strong>{{$location}}:</strong> {{$dates}}</li>
