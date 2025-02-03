@@ -11,17 +11,16 @@ import (
 )
 
 type Artist struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Image string `json:"image"`
+	ID    int          `json:"id"`
+	Name  string       `json:"name"`
+	Image template.URL `json:"image"`
 }
 
 type Relation struct {
-	ID              int                 `json:"id"`
-	DatesLocations  map[string][]string `json:"datesLocations"`
-	ArtistName      string
-	ArtistNameLower string
-	ArtistImage     string `json:"image"`
+	ID             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
+	ArtistName     string
+	ArtistImage    template.URL
 }
 
 type APIResponse struct {
@@ -88,24 +87,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filter := strings.ToLower(r.URL.Query().Get("filter"))
-	filteredMap := make(map[int]Relation)
 	var filtered []Relation
 
-	for _, relation := range relations {
-		for location, dates := range relation.DatesLocations {
-			for _, date := range dates {
-				ArtistNameLower := strings.ReplaceAll(strings.ToLower(artists[relation.ID-1].Name), " ", "")
-				if strings.Contains(strings.ToLower(location), filter) ||
-					strings.Contains(strings.ToLower(date), filter) ||
-					strings.Contains(strings.ToLower(artists[relation.ID-1].Name), filter) {
-					relation.ArtistImage = artists[relation.ID-1].Image
-					relation.ArtistName = artists[relation.ID-1].Name
-					relation.ArtistNameLower = ArtistNameLower
-					if _, exists := filteredMap[relation.ID]; !exists {
-						filteredMap[relation.ID] = relation
-						filtered = append(filtered, relation)
-					}
-					break
+	for _, artist := range artists {
+		if strings.Contains(strings.ToLower(artist.Name), filter) {
+			for _, relation := range relations {
+				if relation.ID == artist.ID {
+					relation.ArtistName = artist.Name
+					relation.ArtistImage = artist.Image
+					filtered = append(filtered, relation)
 				}
 			}
 		}
@@ -119,9 +109,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", handler)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	fmt.Println("Serveur démarré sur : http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

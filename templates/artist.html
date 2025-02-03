@@ -1,20 +1,13 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtre par Artiste</title>
-    <link rel="stylesheet" href="/static/style.css"> 
+    <title>{{.Name}}</title>
 </head>
 <body>
-    <h1>Filtrage des Artistes</h1>
-    <form method="GET" action="/">
-        <label for="filter">Rechercher un artiste :</label>
-        <input type="text" name="filter" id="filter">
-        <button type="submit">Rechercher</button>
-    </form>
-
-    <h2>Résultats des concerts :</h2>
+    <h1>{{.Name}}</h1>
+    <img src="{{.Image}}" alt="{{.Name}}">
     <div class="artist-container">
         {{range .}}
             <div class="artist-card">
@@ -32,6 +25,5 @@
             <p>Aucun concert trouvé.</p> 
         {{end}}
     </div>
-
 </body>
 </html>
