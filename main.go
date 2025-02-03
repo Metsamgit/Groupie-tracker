@@ -10,16 +10,17 @@ import (
 	"strings"
 )
 
-
 type Artist struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID    int          `json:"id"`
+	Name  string       `json:"name"`
+	Image template.URL `json:"image"`
 }
 
 type Relation struct {
 	ID             int                 `json:"id"`
 	DatesLocations map[string][]string `json:"datesLocations"`
-	ArtistName     string              
+	ArtistName     string
+	ArtistImage    template.URL
 }
 
 type APIResponse struct {
@@ -50,7 +51,6 @@ func getArtists() ([]Artist, error) {
 	return artists, nil
 }
 
-
 func getRelations() ([]Relation, error) {
 	url := "https://groupietrackers.herokuapp.com/api/relation"
 	resp, err := http.Get(url)
@@ -73,7 +73,6 @@ func getRelations() ([]Relation, error) {
 	return apiResponse.Index, nil
 }
 
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	relations, err := getRelations()
 	if err != nil {
@@ -94,7 +93,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(strings.ToLower(artist.Name), filter) {
 			for _, relation := range relations {
 				if relation.ID == artist.ID {
-					relation.ArtistName = artist.Name 
+					relation.ArtistName = artist.Name
+					relation.ArtistImage = artist.Image
 					filtered = append(filtered, relation)
 				}
 			}
