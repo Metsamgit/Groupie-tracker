@@ -22,7 +22,9 @@
                 <img src="{{.ArtistImage}}" alt="Image de {{.ArtistName}}"></img>
                 <ul>
                     {{range $location, $dates := .DatesLocations}}
-                        <li><strong>{{$location}}:</strong> {{$dates}}</li>
+                        <li>
+                            <a href="https://www.google.fr/maps/place/{{$location}}" target="_blank"><strong>{{$location}}:</strong></a> {{$dates}}
+                        </li>
                     {{end}}
                 </ul>
             </div>
