@@ -8,10 +8,11 @@
 </head>
 <body>
     <h1>Filtrage des Artistes</h1>
-    <form method="GET" action="/">
+    <form method="GET" action="/" id="search-form">
         <label for="filter">Rechercher un artiste :</label>
-        <input type="text" name="filter" id="filter">
+        <input type="text" name="filter" id="filter" autocomplete="off">
         <button type="submit">Rechercher</button>
+        <div id="suggestions" style="display: none;"></div>
     </form>
 
     <h2>Résultats des concerts :</h2>
@@ -32,4 +33,77 @@
         {{end}}
     </ul>
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const input = document.getElementById("filter");
+    const suggestionsContainer = document.getElementById("suggestions");
+
+    input.addEventListener("input", function() {
+        const query = input.value.trim();
+        
+        if (query.length === 0) {
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none"; // On cache la div
+            return;
+        }
+
+        fetch(`/suggestions?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                suggestionsContainer.innerHTML = "";
+                
+                if (data.length === 0) {
+                    suggestionsContainer.style.display = "none"; // Pas de résultat -> cacher
+                    return;
+                }
+
+                data.forEach(artist => {
+                    const div = document.createElement("div");
+                    div.classList.add("suggestion-item");
+
+
+                    div.addEventListener("mouseover", function() {
+                        div.style.background = "#f0f0f0";
+                    });
+                    div.addEventListener("mouseout", function() {
+                        div.style.background = "white";
+                    });
+
+
+                    const img = document.createElement("img");
+                    img.src = artist.image;
+                    img.alt = artist.name;
+                    img.classList.add("suggestion-image");
+
+
+                    const name = document.createElement("span");
+                    name.textContent = artist.name;
+
+                    div.appendChild(img);
+                    div.appendChild(name);
+
+                    div.addEventListener("click", function() {
+                        input.value = artist.name;
+                        suggestionsContainer.innerHTML = "";
+                        suggestionsContainer.style.display = "none";
+                        window.location.href = `/artist/${artist.id}`;
+                    });
+
+                    suggestionsContainer.appendChild(div);
+                });
+
+                suggestionsContainer.style.display = "block"; // Afficher la div si des résultats existent
+            });
+    });
+
+    // Cacher les suggestions si on clique ailleurs
+    document.addEventListener("click", function(e) {
+        if (!input.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+            suggestionsContainer.innerHTML = "";
+            suggestionsContainer.style.display = "none";
+        }
+    });
+});
+</script>
 </html>

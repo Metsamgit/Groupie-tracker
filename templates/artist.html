@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtre par Artiste</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>{{.ArtistName}}</h1>
+    <img src="{{.ArtistImage}}" alt="Image de {{.ArtistName}}">
+    <div id="spotify-player"></div>
+    <h2>Concerts :</h2>
+    <ul>
+        {{range $location, $dates := .DatesLocations}}
+            <li><strong>{{$location}}:</strong> {{$dates}}</li>
+        {{end}}
+    </ul>
+    <a href="/">Retour à l'accueil</a>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Récupérer l'ID de l'artiste depuis l'URL
+            const artistId = window.location.pathname.split("/").pop(); // Ex: "/artist/1" → "1"
+        
+            fetch(`/spotify/${artistId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.iframe) {
+                        document.getElementById("spotify-player").innerHTML = data.iframe;
+                    } else {
+                        document.getElementById("spotify-player").innerHTML = "<p>Aucune musique trouvée</p>";
+                    }
+                })
+                .catch(error => console.error("Erreur:", error));
+        });
+    </script>
+</body>
+</html>
