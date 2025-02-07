@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Carte de Géolocalisation</h1>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        center: pos,
+                        zoom: 14
+                    });
+                    var marker = new google.maps.Marker({
+                        position: pos,
+                        map: map
+                    });
+                }, function() {
+                    handleLocationError(true, map.getCenter());
+                });
+            } else {
+                // Le navigateur ne supporte pas la géolocalisation
+                alert("Géolocalisation non supportée par ce navigateur.");
+            }
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
