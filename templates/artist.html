@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Filtre par Artiste</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
+    <header class="header">
+        <a href="../.." class="logo">Groupie Tracker ~/</a>
+        <div class="Searchbar">
+            <form method="GET" action="/" id="search-form">
+                <input type="text" name="filter" id="filter" autocomplete="off" placeholder="Rechercher un groupe...">
+                <div id="suggestions" style="display: none;"></div>
+            </form>
+        </div>
+    </header>
     <h1>{{.ArtistName}}</h1>
-    <img src="{{.ArtistImage}}" alt="Image de {{.ArtistName}}">
+    <img src="{{.ArtistImage}}" alt="Image de {{.ArtistName}}"  class="rounded-full h-48 w-48">
     <div id="spotify-player"></div>
     <h2>Concerts :</h2>
     <ul>
@@ -33,6 +43,79 @@
                 })
                 .catch(error => console.error("Erreur:", error));
         });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        const input = document.getElementById("filter");
+        const suggestionsContainer = document.getElementById("suggestions");
+    
+        input.addEventListener("input", function() {
+            const query = input.value.trim();
+            
+            if (query.length === 0) {
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none"; // On cache la div
+                return;
+            }
+    
+            fetch(`/suggestions?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsContainer.innerHTML = "";
+                    
+                    if (data.length === 0) {
+                        suggestionsContainer.style.display = "none"; // Pas de résultat -> cacher
+                        return;
+                    }
+    
+                    data.forEach(artist => {
+                        const div = document.createElement("div");
+                        div.classList.add("suggestion-item");
+    
+    
+                        div.addEventListener("mouseover", function() {
+                            div.style.background = "#f0f0f0";
+                        });
+                        div.addEventListener("mouseout", function() {
+                            div.style.background = "white";
+                        });
+    
+    
+                        const img = document.createElement("img");
+                        img.src = artist.image;
+                        img.alt = artist.name;
+                        img.classList.add("suggestion-image");
+    
+    
+                        const name = document.createElement("span");
+                        name.textContent = artist.name;
+    
+                        div.appendChild(img);
+                        div.appendChild(name);
+    
+                        div.addEventListener("click", function() {
+                            input.value = artist.name;
+                            suggestionsContainer.innerHTML = "";
+                            suggestionsContainer.style.display = "none";
+                            window.location.href = `/artist/${artist.id}`;
+                        });
+    
+                        suggestionsContainer.appendChild(div);
+                    });
+    
+                    suggestionsContainer.style.display = "block";
+                    suggestionsContainer.style.width = "40%";
+                });
+        });
+    
+        // Cacher les suggestions si on clique ailleurs
+        document.addEventListener("click", function(e) {
+            if (!input.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                suggestionsContainer.innerHTML = "";
+                suggestionsContainer.style.display = "none";
+            }
+        });
+    });
     </script>
 </body>
 </html>

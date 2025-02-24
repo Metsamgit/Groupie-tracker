@@ -177,7 +177,7 @@ func SpotifyHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Aucun top track trouvé")
 		return
 	}
-	
+
 	response := map[string]string{
 		"iframe": fmt.Sprintf(`<iframe src="https://open.spotify.com/embed/track/%s" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`, topTracks[0].ID),
 	}
@@ -260,7 +260,7 @@ func ArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", IndexHandler)
-	fs := http.FileServer(http.Dir("./static"))
+	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/suggestions", suggestionsHandler)
 	http.HandleFunc("/artist/", ArtistHandler)
